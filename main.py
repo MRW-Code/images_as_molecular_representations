@@ -20,7 +20,7 @@ def get_aug_df(dataset):
     image_dir = f'./data/{dataset}/aug_images'
     paths = [f'{image_dir}/{x}' for x in tqdm(os.listdir(image_dir))]
     labels = [re.findall(r'.*__(.*).png', y)[0] for y in tqdm(paths)]
-    model_df = pd.DataFrame({'fname': paths,
+    model_df = pd.DataFrame({'paths': paths,
                              'label': labels})
     model_df['is_valid'] = 0
     return model_df
