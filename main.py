@@ -19,8 +19,11 @@ def get_aug_df(dataset):
     print('GETTING AUG DF')
     image_dir = f'./data/{dataset}/aug_images'
     paths = [f'{image_dir}/{x}' for x in tqdm(os.listdir(image_dir))]
-    labels = [int(re.findall(r'.*__(.*).png', y)[0]) for y in tqdm(paths)]
-    model_df = pd.DataFrame({'paths': paths,
+    if args.dataset == 'solubility':
+        labels = [float(re.findall(r'.*__(.*).png', y)[0]) for y in tqdm(paths)]
+    elif args.dataset == 'cocrystal':
+        labels = [int(re.findall(r'.*__(.*).png', y)[0]) for y in tqdm(paths)]
+    model_df = pd.DataFrame({'path': paths,
                              'label': labels})
     model_df['is_valid'] = 0
     return model_df
@@ -58,9 +61,9 @@ if __name__ == '__main__':
 
             ### test sets!!!!!
 
-            model = load_learner(f'./checkpoints/{args.dataset}/trained_model.pkl', cpu=True)
+        model = load_learner(f'./checkpoints/{args.dataset}/trained_model.pkl', cpu=True)
             # get best val acc
-            print(f'best_metrics = {model.final_record}')
+        print(f'best_metrics = {model.final_record}')
 
         #     true = []
         #     preds = []
@@ -76,7 +79,7 @@ if __name__ == '__main__':
         # print(f'Test Acc Values: {final_acc}')
         # print(f'Mean Val Acc = {np.mean(val_acc)}')
         # print(f'Mean Test Acc = {np.mean(final_acc)}')
-        print('done')
+        
 
 
 
@@ -84,7 +87,7 @@ if __name__ == '__main__':
 
 
         empty_file(f'./data/{args.dataset}/aug_images')
-    print('done')
+    
 
         #### Come back to apply augmentations
         ## you have 2 x fastai dataframes.

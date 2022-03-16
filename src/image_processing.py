@@ -48,7 +48,7 @@ class ImageAugmentations:
         print('AUGMENTING IMAGES')
         save_path = f'./data/{self.dataset}/aug_images/'
         model_df = model_df[model_df['is_valid'] == 0]
-        input = [(x, y) for x, y in zip(model_df['paths'], model_df['label'])]
+        input = [(x, y) for x, y in zip(model_df['path'], model_df['label'])]
         def worker(input):
             count = 0
             image_path, label = input[0], input[1]
@@ -105,6 +105,6 @@ class ImageStacker:
 
     def fastai_data_table(self):
         paths, labels = self.do_joining()
-        df = pd.DataFrame(paths, columns=['paths'])
+        df = pd.DataFrame(paths, columns=['path'])
         df['label'] = labels
         return df

@@ -2,6 +2,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import os
 import re
+from tqdm import tqdm
+import numpy as np
 
 def split_cc_dataset(df, val_pct):
     # get list of unique pairs
@@ -35,11 +37,21 @@ def get_sol_labels(f):
     label = database['logS'][database['CompoundID'] == idx].values[0]
     return label
 
+def get_sol_labels_fast(paths):
+    database = pd.read_csv('./data/solubility/raw_water_sol_set.csv')
+    labels = np.empty(len(paths))
+    for count, path in tqdm(enumerate(paths)):
+        idx = re.findall(r'.*\/(.*).png', path)[0]
+        labels[count] = database['logS'][database['CompoundID'] == idx].values[0]
+    return labels
+
 def get_sol_df():
+    print('GETTING SOL DF')
     image_dir = './data/solubility/images'
-    paths = [f'{image_dir}/{x}' for x in os.listdir(image_dir)]
-    labels = [get_sol_labels(f) for f in paths]
-    model_df = pd.DataFrame({'fname' : paths,
+    paths = [f'{image_dir}/{x}' for x in tqdm(os.listdir(image_dir))]
+    # labels = [get_sol_labels(f) for f in tqdm(paths)]
+    labels = get_sol_labels_fast(paths)
+    model_df = pd.DataFrame({'path' : paths,
                              'label' : labels})
     return model_df
 
