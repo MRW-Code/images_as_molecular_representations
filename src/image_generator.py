@@ -8,6 +8,7 @@ import os
 class ImageGenerator():
 
     def __init__(self, dataset):
+        print('GENERATING IMAGES')
         self.dataset = dataset
         if self.dataset == 'solubility':
             self.smiles = pd.read_csv('./data/solubility/raw_water_sol_set.csv').SMILES

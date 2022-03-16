@@ -37,7 +37,7 @@ def get_sol_labels(f):
 
 def get_sol_df():
     image_dir = './data/solubility/images'
-    paths = [f'{image_dir}/{x}' for x in os.listdir(image_dir)[0:100]]
+    paths = [f'{image_dir}/{x}' for x in os.listdir(image_dir)]
     labels = [get_sol_labels(f) for f in paths]
     model_df = pd.DataFrame({'fname' : paths,
                              'label' : labels})

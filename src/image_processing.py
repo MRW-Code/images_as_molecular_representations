@@ -6,6 +6,7 @@ import pandas as pd
 from joblib import Parallel, delayed
 import os
 import tqdm
+import re
 
 class ImageAugmentations:
 
@@ -43,29 +44,24 @@ class ImageAugmentations:
         self.flipped_images.append(flipBoth)
         return self.flipped_images
 
-    def do_image_augmentations(self):
+    def do_image_augmentations(self, model_df):
+        print('AUGMENTING IMAGES')
         save_path = f'./data/{self.dataset}/aug_images/'
-        if self.dataset == 'solubility':
-            parent_path = f'./data/{self.dataset}/images/'
-            image_paths = os.listdir(parent_path)
-        elif self.dataset == 'cocrystal':
-            parent_path = f'./data/{self.dataset}/concat_images/'
-            image_paths = os.listdir(parent_path)
-        else:
-            AttributeError('No such Dataset Exists')
-        full_paths = []
-        def worker(image):
-            test_image_path = parent_path + image
+        model_df = model_df[model_df['is_valid'] == 0]
+        input = [(x, y) for x, y in zip(model_df['paths'], model_df['label'])]
+        def worker(input):
             count = 0
-            img = self.get_image(test_image_path)
+            image_path, label = input[0], input[1]
+            image = re.findall(r'.*\/(.*).png', image_path)[0]
+            img = self.get_image(image_path)
             rot = self.rotating(6)
             for im in rot:
                 flip = self.flipping(im)
                 for flipped in flip:
-                    file_name = save_path + f'aug{count}_{image}.png'
+                    file_name = save_path + f'aug{count}_{image}__{label}.png'
                     cv2.imwrite(file_name, flipped)
                     count += 1
-        Parallel(n_jobs=os.cpu_count())(delayed(worker)(image) for image in tqdm.tqdm(image_paths, ncols=80))
+        Parallel(n_jobs=os.cpu_count())(delayed(worker)(i) for i in tqdm.tqdm(input, ncols=80))
 
 class ImageStacker:
 
@@ -110,5 +106,5 @@ class ImageStacker:
     def fastai_data_table(self):
         paths, labels = self.do_joining()
         df = pd.DataFrame(paths, columns=['paths'])
-        df['labels'] = labels
+        df['label'] = labels
         return df
