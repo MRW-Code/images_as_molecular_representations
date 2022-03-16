@@ -81,14 +81,24 @@ if __name__ == '__main__':
         # print(f'Mean Test Acc = {np.mean(final_acc)}')
         
     if args.input == 'descriptor':
+        ## Mordred
         # Generate all molecular descriptors
         desc_gen = DescriptorGenerator(args.dataset)
         desc_df = desc_gen.ml_set
+        labels = np.array(desc_df.loc[:, 'label'])
+        features = np.array(desc_df.drop('label', axis=1))
+
+        if args.dataset == 'cocrystal':
+            model = random_forest_classifier(features, labels, do_kfold=True)
+        elif args.dataset == 'solubility':
+            model = random_forest_regressor(features, labels, do_kfold=True)
+
 
         # still need to implement all descriptor baselines
-        ## got to the point of having the mlset df as label then all desc
-        ### implement RF
+        ## Check why Jan got higher accuracy - probably PCA
         #### implement ANN
         ##### implement other Desc types!
         ###### sol images running on Nitt!
+        ####### Make Kfold default for Images?
+        ######## Jan result is low currently - why??
 

@@ -1,12 +1,15 @@
 from src.utils import *
 from fastai.vision.all import *
 import pandas as pd
-from sklearn.model_selection import KFold
+from sklearn.model_selection import StratifiedKFold, KFold
 import random
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import roc_auc_score, accuracy_score, f1_score, r2_score,\
+    mean_squared_error, mean_absolute_error
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 import cv2
 import torch
 import numpy as np
+from tqdm import tqdm
 
 def train_fastai_model_classification(model_df):
     # print(model_df.head(20), model_df.shape)
@@ -46,3 +49,68 @@ def train_fastai_model_regression(model_df):
                                               min_delta=0.1,
                                               patience=2)])
     learn.export(f'./checkpoints/{args.dataset}/trained_model.pkl')
+
+def random_forest_classifier(features, labels, do_kfold=True):
+    if do_kfold:
+        splits = 5
+        count = 0
+        kfold = StratifiedKFold(n_splits=splits)
+
+        # Placeholders for metrics
+        acc = np.empty(splits)
+        roc = np.empty(splits)
+        f1 = np.empty(splits)
+
+        # stratified kfold training
+        for train_index, val_index in tqdm(kfold.split(features, labels)):
+            X_train, X_test = features[train_index], features[val_index]
+            y_train, y_test = labels[train_index], labels[val_index]
+            model = RandomForestClassifier(n_estimators=1000,
+                                           n_jobs=-1,
+                                           verbose=0)
+            model.fit(X_train, y_train)
+            preds = model.predict(X_test)
+
+            # generate metrics
+            f1[count] = f1_score(y_test, preds, labels=[0,1])
+            acc[count] = accuracy_score(y_test, preds)
+            roc[count] = roc_auc_score(y_test, preds, labels=[0,1])
+            count += 1
+        print(f'Mean Accuracy = {np.mean(acc)}')
+        print(f'Mean F1 = {np.mean(f1)}')
+        print(f'Mean ROC = {np.mean(roc)}')
+    return None
+
+def random_forest_regressor(features, labels, do_kfold=True):
+    if do_kfold:
+        splits = 5
+        count = 0
+        kfold = KFold(n_splits=splits)
+
+        # Placeholders for metrics
+        r2 = np.empty(splits)
+        mse = np.empty(splits)
+        rmse = np.empty(splits)
+        mae = np.empty(splits)
+
+        # stratified kfold training
+        for train_index, val_index in tqdm(kfold.split(features)):
+            X_train, X_test = features[train_index], features[val_index]
+            y_train, y_test = labels[train_index], labels[val_index]
+            model = RandomForestRegressor(n_estimators=1000,
+                                           n_jobs=-1,
+                                           verbose=0)
+            model.fit(X_train, y_train)
+            preds = model.predict(X_test)
+
+            # generate metrics
+            r2[count] = r2_score(y_test, preds)
+            mse[count] = mean_squared_error(y_test, preds, squared=True)
+            rmse[count] = mean_squared_error(y_test, preds, squared=False)
+            mae[count] = mean_absolute_error(y_test, preds)
+            count += 1
+        print(f'Mean R2 = {np.mean(r2)}')
+        print(f'Mean mse = {np.mean(mse)}')
+        print(f'Mean rmse = {np.mean(rmse)}')
+        print(f'Mean mae = {np.mean(mae)}')
+    return None

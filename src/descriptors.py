@@ -9,9 +9,12 @@ class DescriptorGenerator:
     def __init__(self, dataset):
         self.dataset = dataset
         if self.dataset == 'solubility':
-            self.raw_df = pd.read_csv('./data/solubility/raw_water_sol_set.csv').iloc[0:20, :]
-            self.smiles = self.raw_df.SMILES[0:20]
-            self.id = self.raw_df.CompoundID[0:20]
+            # self.raw_df = pd.read_csv('./data/solubility/raw_water_sol_set.csv').iloc[0:20, :]
+            # self.smiles = self.raw_df.SMILES[0:20]
+            # self.id = self.raw_df.CompoundID[0:20]
+            self.raw_df = pd.read_csv('./data/solubility/raw_water_sol_set.csv')
+            self.smiles = self.raw_df.SMILES
+            self.id = self.raw_df.CompoundID
             self.ml_set = self.gen_ml_set_solubility()
 
         elif self.dataset == 'cocrystal':
