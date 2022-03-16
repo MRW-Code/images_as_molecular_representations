@@ -96,6 +96,7 @@ if __name__ == '__main__':
 
         # still need to implement all descriptor baselines
         ## Check why Jan got higher accuracy - probably PCA
+        ## Sol Dataset is low, kfold splits off too much!!!
         #### implement ANN
         ##### implement other Desc types!
         ###### sol images running on Nitt!

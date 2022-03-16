@@ -105,6 +105,7 @@ def random_forest_regressor(features, labels, do_kfold=True):
 
             # generate metrics
             r2[count] = r2_score(y_test, preds)
+            print(r2)
             mse[count] = mean_squared_error(y_test, preds, squared=True)
             rmse[count] = mean_squared_error(y_test, preds, squared=False)
             mae[count] = mean_absolute_error(y_test, preds)
