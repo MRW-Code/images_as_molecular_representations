@@ -16,6 +16,7 @@ def train_fastai_model_classification(model_df):
                                    valid_col=2,
                                    item_tfms=None,
                                    batch_tfms=None,
+                                   y_block=CategoryBlock(),
                                    bs=32)
     metrics = [error_rate, accuracy, Precision(), Recall(), F1Score(), RocAuc()]
     learn = cnn_learner(dls, resnet18, metrics=metrics)
