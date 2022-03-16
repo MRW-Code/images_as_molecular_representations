@@ -3,6 +3,7 @@ from src.image_generator import ImageGenerator
 from src.image_processing import ImageStacker, ImageAugmentations
 from src.preprocessing import split_cc_dataset, get_split_sol_dataset
 from src.models import *
+from src.descriptors import DescriptorGenerator
 from tqdm import tqdm
 import os
 import glob
@@ -57,13 +58,12 @@ if __name__ == '__main__':
             trainer = train_fastai_model_classification(model_df)
         elif args.dataset == 'solubility':
             trainer = train_fastai_model_regression(model_df)
-
-
-            ### test sets!!!!!
-
+        ### test sets!!!!!
         model = load_learner(f'./checkpoints/{args.dataset}/trained_model.pkl', cpu=True)
             # get best val acc
         print(f'best_metrics = {model.final_record}')
+
+        empty_file(f'./data/{args.dataset}/aug_images')
 
         #     true = []
         #     preds = []
@@ -80,17 +80,15 @@ if __name__ == '__main__':
         # print(f'Mean Val Acc = {np.mean(val_acc)}')
         # print(f'Mean Test Acc = {np.mean(final_acc)}')
         
+    if args.input == 'descriptor':
+        # Generate all molecular descriptors
+        desc_gen = DescriptorGenerator(args.dataset)
+        desc_df = desc_gen.ml_set
 
-
-
-
-
-
-        empty_file(f'./data/{args.dataset}/aug_images')
-    
-
-        #### Come back to apply augmentations
-        ## you have 2 x fastai dataframes.
-        # apple augs to the train only
         # still need to implement all descriptor baselines
+        ## got to the point of having the mlset df as label then all desc
+        ### implement RF
+        #### implement ANN
+        ##### implement other Desc types!
+        ###### sol images running on Nitt!
 
