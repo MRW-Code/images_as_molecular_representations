@@ -101,4 +101,5 @@ if __name__ == '__main__':
         ###### sol images running on Nitt!
         ####### Make Kfold default for Images?
         ######## Jan result is low currently - why??
+        ######### Save Descs so no need to calc each time!
 
