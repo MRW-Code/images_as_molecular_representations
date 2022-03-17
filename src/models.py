@@ -23,11 +23,11 @@ def train_fastai_model_classification(model_df):
                                    bs=256)
     metrics = [error_rate, accuracy, RocAucBinary()]
     learn = cnn_learner(dls, resnet18, metrics=metrics)
-    learn.fine_tune(10, cbs=[SaveModelCallback(fname=f'./{args.dataset}_best_cbs.pth'),
+    learn.fine_tune(100, cbs=[SaveModelCallback(monitor='valid_loss', fname=f'./{args.dataset}_best_cbs.pth'),
                             ReduceLROnPlateau(monitor='valid_loss',
                                               min_delta=0.1,
                                               patience=2)])
-    learn.load('./models/{args.dataset}_best_cbs.pth')
+    print(learn.validate())
     learn.export(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}.pkl')
 
     interp = ClassificationInterpretation.from_learner(learn)
@@ -45,10 +45,11 @@ def train_fastai_model_regression(model_df):
                                    bs=256)
     metrics = [R2Score(), mse, rmse, mae]
     learn = cnn_learner(dls, resnet18, metrics=metrics)
-    learn.fine_tune(100, cbs=[SaveModelCallback(fname=f'./{args.dataset}_best_cbs'),
+    learn.fine_tune(100, cbs=[SaveModelCallback(monitor='valid_loss', fname=f'./{args.dataset}_best_cbs.pth'),
                             ReduceLROnPlateau(monitor='valid_loss',
                                               min_delta=0.1,
                                               patience=2)])
+    print(learn.validate())
     learn.export(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}.pkl')
 
 def random_forest_classifier(features, labels, do_kfold=True):
