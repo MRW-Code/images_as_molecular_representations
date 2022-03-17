@@ -59,7 +59,7 @@ if __name__ == '__main__':
         elif args.dataset == 'solubility':
             trainer = train_fastai_model_regression(model_df)
         ### test sets!!!!!
-        model = load_learner(f'./checkpoints/{args.dataset}/trained_model.pkl', cpu=True)
+        model = load_learner(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}.pkl', cpu=True)
             # get best val acc
         print(f'best_metrics = {model.final_record}')
 
