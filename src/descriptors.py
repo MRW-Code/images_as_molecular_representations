@@ -1,8 +1,12 @@
 import os
 import pandas as pd
+from tqdm import tqdm
 from rdkit import Chem
+from rdkit.Chem import AllChem
 from mordred import Calculator, descriptors
-from deepchem.feat import RDKitDescriptors, Mol2VecFingerprint , CircularFingerprint
+from deepchem.feat import RDKitDescriptors, Mol2VecFingerprint ,\
+    CircularFingerprint, PubChemFingerprint, MACCSKeysFingerprint
+from spectrophore import spectrophore
 
 
 from src.utils import args
@@ -42,12 +46,31 @@ class RepresentationGenerator:
 
     def mol2vec_from_smiles(self, smile_list):
         get_desc = Mol2VecFingerprint()
-        desc = get_desc.featurize(list(smile_list), log_every_n=1)
+        desc = get_desc.featurize(smile_list)
         return pd.DataFrame(desc)
 
     def ecfp_from_smiles(self, smile_list):
         get_desc = CircularFingerprint()
-        desc = get_desc.featurize(list(smile_list), log_every_n=1)
+        desc = get_desc.featurize(smile_list)
+        return pd.DataFrame(desc)
+
+    def pubchem_fp_from_smiles(self, smile_list):
+        get_desc = PubChemFingerprint()
+        desc = get_desc.featurize(smile_list)
+        return pd.DataFrame(desc)
+
+    def maccs_from_smiles(self, smile_list):
+        get_desc = MACCSKeysFingerprint()
+        desc = get_desc.featurize(smile_list)
+        return pd.DataFrame(desc)
+
+    def spectrophore_from_smiles(self, smile_list):
+        mols = [Chem.MolFromSmiles(p) for p in smile_list]
+        mols = [mol for mol in mols if isinstance(mol, Chem.Mol)]
+        mols = [Chem.AddHs(mol) for mol in tqdm(mols)]
+        [AllChem.EmbedMolecule(mol, randomSeed=0) for mol in mols]
+        calculator = spectrophore.SpectrophoreCalculator(normalization='none')
+        desc = [calculator.calculate(mol) for mol in tqdm(mols)]
         return pd.DataFrame(desc)
 
     def get_raw_descriptors(self, smiles, names):
@@ -59,65 +82,14 @@ class RepresentationGenerator:
             desc_df = self.mol2vec_from_smiles(smiles)
         elif args.input == 'ecfp':
             desc_df = self.ecfp_from_smiles(smiles)
+        elif args.input == 'pubchem_fp':
+            desc_df = self.pubchem_fp_from_smiles(smiles)
+        elif args.input == 'maccs':
+            desc_df = self.maccs_from_smiles(smiles)
+        elif args.input == 'spectrophore':
+            desc_df = self.spectrophore_from_smiles(smiles)
         else:
             AttributeError('Input type argument not implemented ')
-        desc_df.index = names
-        return desc_df
-
-    def clean_descriptors(self, desc_df):
-        df = desc_df.dropna(axis=1).select_dtypes(exclude=['object'])
-        return df
-
-    def get_clean_descriptors(self, smiles, names):
-        raw_desc = self.get_raw_descriptors(smiles, names)
-        clean_desc = self.clean_descriptors(raw_desc)
-        return clean_desc
-
-    def gen_ml_set_solubility(self):
-        clean_desc = self.get_clean_descriptors(self.smiles, self.id)
-        labels_df = self.raw_df.loc[:, ['CompoundID', 'logS']]
-        df = pd.merge(labels_df, clean_desc, left_on='CompoundID', right_index=True)
-        df = df.drop('CompoundID', axis=1)
-        df = df.rename(columns={'logS' : 'label'})
-        return df
-
-    def gen_ml_set_cocrystal(self):
-        cleanA = self.get_clean_descriptors(self.smilesA, self.namesA)
-        cleanB = self.get_clean_descriptors(self.smilesB, self.namesB)
-        df1 = pd.merge(self.raw_df, cleanA, left_on='Component1', right_index=True)
-        df2 = pd.merge(df1, cleanB, left_on='Component2', right_index=True)
-        df2 = df2.drop(['Component1', 'Component2'], axis=1)
-        df2 = df2.rename(columns={'Outcome' : 'label'})
-        return df2
-
-class RDKitDescriptorGenerator:
-
-    def __init__(self, dataset):
-        self.dataset = dataset
-        if self.dataset == 'solubility':
-            # self.raw_df = pd.read_csv('./data/solubility/raw_water_sol_set.csv').iloc[0:20, :]
-            # self.smiles = self.raw_df.SMILES[0:20]
-            # self.id = self.raw_df.CompoundID[0:20]
-            self.raw_df = pd.read_csv('./data/solubility/raw_water_sol_set.csv')
-            self.smiles = self.raw_df.SMILES
-            self.id = self.raw_df.CompoundID
-            self.ml_set = self.gen_ml_set_solubility()
-
-        elif self.dataset == 'cocrystal':
-            self.raw_df = pd.read_csv('./data/cocrystal/jan_raw_data.csv')
-            self.smilesA = pd.read_csv('./data/cocrystal/component1_smiles.csv').smiles
-            self.smilesB = pd.read_csv('./data/cocrystal/component2_smiles.csv').smiles
-            self.namesA = pd.read_csv('./data/cocrystal/component1_smiles.csv').api
-            self.namesB = pd.read_csv('./data/cocrystal/component2_smiles.csv').api
-            self.ml_set = self.gen_ml_set_cocrystal()
-
-    def rdkit_descriptors_from_smiles(self, smile_list):
-        get_desc = RDKitDescriptors()
-        desc = get_desc.featurize(smile_list)
-        return pd.DataFrame(desc)
-
-    def get_raw_descriptors(self, smiles, names):
-        desc_df = self.descriptors_from_smiles(smiles)
         desc_df.index = names
         return desc_df
 

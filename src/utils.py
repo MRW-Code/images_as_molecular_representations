@@ -6,7 +6,8 @@ parser = argparse.ArgumentParser(usage='python main.py')
 
 parser.add_argument('-i', '--input', action='store', dest='input',
                     default='image', choices=['image', 'mordred_descriptor', 'rdkit_descriptor',
-                                              'mol2vec', 'ecfp'])
+                                              'mol2vec', 'ecfp', 'pubchem_fp', 'maccs',
+                                              'spectrophore'])
 parser.add_argument('-d', '--dataset', action='store', dest='dataset',
                     default='None', choices=['None', 'solubility', 'cocrystal'])
 parser.add_argument('--no_augs', action='store_true', dest='no_augs', default=False)
