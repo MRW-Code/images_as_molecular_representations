@@ -48,7 +48,7 @@ def train_fastai_model_regression(model_df):
                             ReduceLROnPlateau(monitor='valid_loss',
                                               min_delta=0.1,
                                               patience=2)])
-    learn.export(f'./checkpoints/{args.dataset}/trained_model.pkl')
+    learn.export(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}.pkl')
 
 def random_forest_classifier(features, labels, do_kfold=True):
     if do_kfold:
