@@ -3,7 +3,8 @@ from src.image_generator import ImageGenerator
 from src.image_processing import ImageStacker, ImageAugmentations
 from src.preprocessing import split_cc_dataset, get_split_sol_dataset
 from src.models import *
-from src.descriptors import DescriptorGenerator
+from src.descriptors import RepresentationGenerator
+
 from tqdm import tqdm
 import os
 import glob
@@ -79,12 +80,12 @@ if __name__ == '__main__':
         # print(f'Test Acc Values: {final_acc}')
         # print(f'Mean Val Acc = {np.mean(val_acc)}')
         # print(f'Mean Test Acc = {np.mean(final_acc)}')
-        
-    if args.input == 'descriptor':
-        ## Mordred
-        # Generate all molecular descriptors
-        desc_gen = DescriptorGenerator(args.dataset)
+
+    else:
+
+        desc_gen = RepresentationGenerator(args.dataset)
         desc_df = desc_gen.ml_set
+
         labels = np.array(desc_df.loc[:, 'label'])
         features = np.array(desc_df.drop('label', axis=1))
 
@@ -99,7 +100,6 @@ if __name__ == '__main__':
         ## Sol Dataset is low, kfold splits off too much!!!
         #### implement ANN
         ##### implement other Desc types!
-        ###### sol images running on Nitt!
         ####### Make Kfold default for Images?
         ######## Jan result is low currently - why??
         ######### Save Descs so no need to calc each time!

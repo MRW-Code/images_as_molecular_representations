@@ -53,6 +53,7 @@ def train_fastai_model_regression(model_df):
     learn.export(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}.pkl')
 
 def random_forest_classifier(features, labels, do_kfold=True):
+    print(f'RUNNING RF CLASSIFIER WITH KFOLD = {do_kfold}')
     if do_kfold:
         splits = 5
         count = 0
@@ -84,6 +85,7 @@ def random_forest_classifier(features, labels, do_kfold=True):
     return None
 
 def random_forest_regressor(features, labels, do_kfold=True):
+    print(f'RUNNING RF REGRESSOR WITH KFOLD = {do_kfold}')
     if do_kfold:
         splits = 5
         count = 0
