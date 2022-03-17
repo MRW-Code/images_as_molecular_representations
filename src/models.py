@@ -27,7 +27,7 @@ def train_fastai_model_classification(model_df):
                             ReduceLROnPlateau(monitor='valid_loss',
                                               min_delta=0.1,
                                               patience=2)])
-    learn.export(f'./checkpoints/{args.dataset}/trained_model.pkl')
+    learn.export(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}.pkl')
 
     interp = ClassificationInterpretation.from_learner(learn)
     interp.print_classification_report()
