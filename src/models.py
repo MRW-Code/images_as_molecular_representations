@@ -23,10 +23,11 @@ def train_fastai_model_classification(model_df):
                                    bs=256)
     metrics = [error_rate, accuracy, RocAucBinary()]
     learn = cnn_learner(dls, resnet18, metrics=metrics)
-    learn.fine_tune(100, cbs=[SaveModelCallback(fname=f'./{args.dataset}_best_cbs.pth'),
+    learn.fine_tune(10, cbs=[SaveModelCallback(fname=f'./{args.dataset}_best_cbs.pth'),
                             ReduceLROnPlateau(monitor='valid_loss',
                                               min_delta=0.1,
                                               patience=2)])
+    learn.load('./models/{args.dataset}_best_cbs.pth')
     learn.export(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}.pkl')
 
     interp = ClassificationInterpretation.from_learner(learn)
