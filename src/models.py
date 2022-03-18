@@ -5,6 +5,7 @@ from sklearn.metrics import roc_auc_score, accuracy_score, f1_score, r2_score,\
     mean_squared_error, mean_absolute_error
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from torch import nn
+import torch
 import numpy as np
 from tqdm import tqdm
 
@@ -78,6 +79,7 @@ def random_forest_classifier(features, labels, do_kfold=True):
             acc[count] = accuracy_score(y_test, preds)
             roc[count] = roc_auc_score(y_test, preds, labels=[0,1])
             count += 1
+            torch.cuda.empty_cache()
         print(f'Mean Accuracy = {np.mean(acc)}')
         print(f'Mean F1 = {np.mean(f1)}')
         print(f'Mean ROC = {np.mean(roc)}')
@@ -108,7 +110,7 @@ def random_forest_regressor(features, labels, do_kfold=True):
 
             # generate metrics
             r2[count] = r2_score(y_test, preds)
-            print(r2)
+            # print(r2)
             mse[count] = mean_squared_error(y_test, preds, squared=True)
             rmse[count] = mean_squared_error(y_test, preds, squared=False)
             mae[count] = mean_absolute_error(y_test, preds)
