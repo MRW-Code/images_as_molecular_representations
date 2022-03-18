@@ -146,7 +146,7 @@ def kfold_fastai(n_splits=10):
             X_train_single, X_val = paths.reindex(index=train_index), paths.reindex(index=val_index)
             y_train_single, y_val = labels.reindex(index=train_index), labels.reindex(index=val_index)
 
-            train_df = pd.DataFrame({'path': X_train, 'label': y_train})
+            train_df = pd.DataFrame({'path': X_train_single, 'label': y_train_single})
             train_df['is_valid'] = 0
             val_df = pd.DataFrame({'path': X_val, 'label': y_val})
             val_df['is_valid'] = 1
