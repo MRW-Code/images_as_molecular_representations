@@ -45,7 +45,7 @@ def train_fastai_model_regression(model_df, count):
                                    shuffle=True)
     metrics = [R2Score(), mse, rmse, mae]
     learn = cnn_learner(dls, resnet18, metrics=metrics)
-    learn.fine_tune(100, cbs=[SaveModelCallback(monitor='valid_loss', fname=f'./{args.dataset}_best_cbs.pth'),
+    learn.fine_tune(100, cbs=[SaveModelCallback(monitor='mse', comp=np.greater, fname=f'./{args.dataset}_best_cbs.pth'),
                             ReduceLROnPlateau(monitor='valid_loss',
                                               min_delta=0.1,
                                               patience=2)])
