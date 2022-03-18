@@ -9,7 +9,7 @@ import torch
 import numpy as np
 from tqdm import tqdm
 
-def train_fastai_model_classification(model_df):
+def train_fastai_model_classification(model_df, count):
     # print(model_df.head(20), model_df.shape)
     dls = ImageDataLoaders.from_df(model_df,
                                    fn_col=0,
@@ -27,12 +27,12 @@ def train_fastai_model_classification(model_df):
                                               min_delta=0.1,
                                               patience=2)])
     print(learn.validate())
-    learn.export(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}.pkl')
+    learn.export(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}_{count}.pkl')
 
     interp = ClassificationInterpretation.from_learner(learn)
     interp.print_classification_report()
 
-def train_fastai_model_regression(model_df):
+def train_fastai_model_regression(model_df, count):
     # print(model_df.head(20), model_df.shape)
     dls = ImageDataLoaders.from_df(model_df,
                                    fn_col=0,
@@ -50,7 +50,7 @@ def train_fastai_model_regression(model_df):
                                               min_delta=0.1,
                                               patience=2)])
     print(learn.validate())
-    learn.export(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}.pkl')
+    learn.export(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}_{count}.pkl')
 
 def random_forest_classifier(features, labels, do_kfold=True):
     print(f'RUNNING RF CLASSIFIER WITH KFOLD = {do_kfold}')

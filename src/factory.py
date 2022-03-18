@@ -85,6 +85,7 @@ def kfold_fastai(n_splits=10):
         # start kfold
         kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
         best_metrics = []
+        count = 0
         for train_index, val_index in tqdm(kfold.split(paths, labels)):
             X_train_single, X_val = paths.reindex(index=train_index), paths.reindex(index=val_index)
             y_train_single, y_val = labels.reindex(index=train_index), labels.reindex(index=val_index)
@@ -110,28 +111,27 @@ def kfold_fastai(n_splits=10):
             train_df['is_valid'] = 0
             val_df = pd.DataFrame({'path' : X_val, 'label' : y_val})
             val_df['is_valid'] = 1
-            raw_df = pd.concat([train_df, val_df], axis=0)
+            raw_df_new = pd.concat([train_df, val_df], axis=0)
 
             # Apply Augmentations to train set
             if not args.no_augs:
                 augmentor = ImageAugmentations(args.dataset)
-                augmentor.do_image_augmentations(raw_df)
+                augmentor.do_image_augmentations(raw_df_new)
                 aug_df = get_aug_df(args.dataset)
                 model_df = pd.concat([aug_df, val_df], axis=0)
             else:
-                model_df = raw_df
+                model_df = raw_df_new
 
             # Fastai model applied
-            trainer = train_fastai_model_classification(model_df)
-            model = load_learner(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}.pkl', cpu=True)
+            trainer = train_fastai_model_classification(model_df, count)
+            model = load_learner(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}_{count}.pkl', cpu=True)
             best_metrics.append(model.final_record)
+            count +=1
 
         # Return best metrics
         print(best_metrics)
-        for metric in best_metrics:
-            for val in metric:
-                print(f'mean acc = {np.mean(val[2])}')
-                print(f'mean roc = {np.mean(val[3])}')
+        print(f'mean acc = {np.mean([best_metrics[x][2] for x in range(n_splits)])}')
+        print(f'mean roc = {np.mean([best_metrics[x][2] for x in range(n_splits)])}')
 
     if args.dataset == 'solubility':
         # Get dataset
@@ -141,6 +141,7 @@ def kfold_fastai(n_splits=10):
 
         # Kfold split
         kfold = KFold(n_splits=n_splits, shuffle=True, random_state=42)
+        count = 0
         for train_index, val_index in tqdm(kfold.split(paths)):
             X_train_single, X_val = paths.reindex(index=train_index), paths.reindex(index=val_index)
             y_train_single, y_val = labels.reindex(index=train_index), labels.reindex(index=val_index)
@@ -149,29 +150,30 @@ def kfold_fastai(n_splits=10):
             train_df['is_valid'] = 0
             val_df = pd.DataFrame({'path': X_val, 'label': y_val})
             val_df['is_valid'] = 1
-            raw_df = pd.concat([train_df, val_df], axis=0)
+            raw_df_new = pd.concat([train_df, val_df], axis=0)
 
             # Apply Augmentations to train set
             if not args.no_augs:
                 augmentor = ImageAugmentations(args.dataset)
-                augmentor.do_image_augmentations(raw_df)
+                augmentor.do_image_augmentations(raw_df_new)
                 aug_df = get_aug_df(args.dataset)
                 model_df = pd.concat([aug_df, val_df], axis=0)
             else:
-                model_df = raw_df
+                model_df = raw_df_new
 
             # Fastai model applied
-            trainer = train_fastai_model_classification(model_df)
+            trainer = train_fastai_model_classification(model_df, count)
 
-            model = load_learner(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}.pkl', cpu=True)
+            model = load_learner(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}_{count}.pkl', cpu=True)
             best_metrics.append(model.final_record)
+            count +=1
 
             # Return best metrics
         print(best_metrics)
-        for metric in best_metrics:
-            for val in metric:
-                print(f'mean acc = {np.mean(val[2])}')
-                print(f'mean roc = {np.mean(val[3])}')
+        print(f'mean R2 = {np.mean([best_metrics[x][1] for x in range(n_splits)])}')
+        print(f'mean mse = {np.mean([best_metrics[x][2] for x in range(n_splits)])}')
+        print(f'mean rmse = {np.mean([best_metrics[x][3] for x in range(n_splits)])}')
+        print(f'mean mae = {np.mean([best_metrics[x][4] for x in range(n_splits)])}')
 
 
     return None
