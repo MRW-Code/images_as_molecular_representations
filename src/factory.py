@@ -131,7 +131,7 @@ def kfold_fastai(n_splits=10):
         # Return best metrics
         print(best_metrics)
         print(f'mean acc = {np.mean([best_metrics[x][2] for x in range(n_splits)])}')
-        print(f'mean roc = {np.mean([best_metrics[x][2] for x in range(n_splits)])}')
+        print(f'mean roc = {np.mean([best_metrics[x][3] for x in range(n_splits)])}')
 
     if args.dataset == 'solubility':
         # Get dataset
