@@ -162,7 +162,7 @@ def kfold_fastai(n_splits=10):
                 model_df = raw_df_new
 
             # Fastai model applied
-            trainer = train_fastai_model_classification(model_df, count)
+            trainer = train_fastai_model_regression(model_df, count)
 
             model = load_learner(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}_{count}.pkl', cpu=True)
             best_metrics.append(model.final_record)
