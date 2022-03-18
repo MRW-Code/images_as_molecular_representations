@@ -10,26 +10,29 @@ def split_cc_dataset(df, val_pct):
     df_unique = df.iloc[::2]
 
     # perform test/val split on unique pairs
-    _, valid_df = train_test_split(df_unique, test_size=val_pct)
+    train_df, valid_df = train_test_split(df_unique, test_size=val_pct)
 
     # find index of both images in the valid pairs
-    valid_idx = []
-    for value in valid_df.index.values:
+    valid_idx = valid_df.index.values
+    train_idx = []
+    for value in train_df.index.values:
         if value % 2 == 0:
-            valid_idx.append(value)
-            valid_idx.append(value + 1)
+            train_idx.append(value)
+            train_idx.append(value + 1)
         else:
-            valid_idx.append(value)
-            valid_idx.append(value - 1)
+            train_idx.append(value)
+            train_idx.append(value - 1)
 
     # assign correct 'is_valid' label
     df['is_valid'] = None
     for row, _ in enumerate(df.index):
         if row in valid_idx:
             df.loc[row, 'is_valid'] = 1
-        else:
+        elif row in train_idx:
             df.loc[row, 'is_valid'] = 0
-    return df
+        else:
+            df.loc[row, 'is_valid'] = 'duplicate'
+    return df[df['is_valid'] != 'duplicate']
 
 def get_sol_labels(f):
     database = pd.read_csv('./data/solubility/raw_water_sol_set.csv')

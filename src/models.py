@@ -1,13 +1,10 @@
 from src.utils import *
 from fastai.vision.all import *
-import pandas as pd
 from sklearn.model_selection import StratifiedKFold, KFold
-import random
 from sklearn.metrics import roc_auc_score, accuracy_score, f1_score, r2_score,\
     mean_squared_error, mean_absolute_error
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-import cv2
-import torch
+from torch import nn
 import numpy as np
 from tqdm import tqdm
 
