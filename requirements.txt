@@ -1,10 +1,10 @@
-pandas~=1.1.5
+pandas~=1.4.1
 tqdm~=4.63.0
-rdkit~=2020.09.1.0
-numpy~=1.19.2
-scikit-learn~=0.24.2
-joblib~=0.13.2
-deepchem~=2.5.0
-torch~=1.10.1
+rdkit
+numpy~=1.21.5
+scikit-learn~=0.22.2.post1
+joblib~=0.14.0
+deepchem~=2.6.1
+torch~=1.9.1
 fastai~=2.5.3
 mordred~=1.2.0
