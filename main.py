@@ -88,6 +88,7 @@ if __name__ == '__main__':
 
         labels = np.array(desc_df.loc[:, 'label'])
         features = np.array(desc_df.drop('label', axis=1))
+        print(features.shape)
 
         if args.dataset == 'cocrystal':
             model = random_forest_classifier(features, labels, do_kfold=True)

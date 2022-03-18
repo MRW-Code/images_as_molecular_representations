@@ -55,9 +55,9 @@ def train_fastai_model_regression(model_df):
 def random_forest_classifier(features, labels, do_kfold=True):
     print(f'RUNNING RF CLASSIFIER WITH KFOLD = {do_kfold}')
     if do_kfold:
-        splits = 5
+        splits = 10
         count = 0
-        kfold = StratifiedKFold(n_splits=splits)
+        kfold = StratifiedKFold(n_splits=splits, shuffle=True, random_state=42)
 
         # Placeholders for metrics
         acc = np.empty(splits)
@@ -87,9 +87,9 @@ def random_forest_classifier(features, labels, do_kfold=True):
 def random_forest_regressor(features, labels, do_kfold=True):
     print(f'RUNNING RF REGRESSOR WITH KFOLD = {do_kfold}')
     if do_kfold:
-        splits = 5
+        splits = 10
         count = 0
-        kfold = KFold(n_splits=splits)
+        kfold = KFold(n_splits=splits, shuffle=True, random_state=42)
 
         # Placeholders for metrics
         r2 = np.empty(splits)
