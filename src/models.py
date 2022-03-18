@@ -42,7 +42,8 @@ def train_fastai_model_regression(model_df):
                                    item_tfms=None,
                                    batch_tfms=None,
                                    y_block=RegressionBlock(),
-                                   bs=256)
+                                   bs=64,
+                                   shuffle=True)
     metrics = [R2Score(), mse, rmse, mae]
     learn = cnn_learner(dls, resnet18, metrics=metrics)
     learn.fine_tune(100, cbs=[SaveModelCallback(monitor='valid_loss', fname=f'./{args.dataset}_best_cbs.pth'),
