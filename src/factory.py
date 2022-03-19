@@ -141,6 +141,7 @@ def kfold_fastai(n_splits=10):
 
         # Kfold split
         kfold = KFold(n_splits=n_splits, shuffle=True, random_state=42)
+        best_metrics = []
         count = 0
         for train_index, val_index in tqdm(kfold.split(paths)):
             X_train_single, X_val = paths.reindex(index=train_index), paths.reindex(index=val_index)

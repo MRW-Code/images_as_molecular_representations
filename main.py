@@ -47,7 +47,7 @@ if __name__ == '__main__':
         # still need to implement all descriptor baselines
         ## implement ANN
         ### implement other Desc types!
-        #### Make Kfold default for Images?
         ##### Add oversampling
         ###### Make non kfold for desc models - break the code after 1 itteration of kfold?
+        ####### RUN RUN RUN!!!
 
