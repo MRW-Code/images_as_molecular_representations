@@ -7,6 +7,8 @@ from mordred import Calculator, descriptors
 from deepchem.feat import RDKitDescriptors, Mol2VecFingerprint ,\
     CircularFingerprint, PubChemFingerprint, MACCSKeysFingerprint
 from spectrophore import spectrophore
+from joblib import Parallel, delayed
+from multiprocessing import Manager
 
 
 from src.utils import args
@@ -64,14 +66,40 @@ class RepresentationGenerator:
         desc = get_desc.featurize(smile_list)
         return pd.DataFrame(desc)
 
-    def spectrophore_from_smiles(self, smile_list):
+    def spectrophore_from_smiles(self, smile_list, names):
         mols = [Chem.MolFromSmiles(p) for p in smile_list]
         mols = [mol for mol in mols if isinstance(mol, Chem.Mol)]
         mols = [Chem.AddHs(mol) for mol in tqdm(mols)]
         [AllChem.EmbedMolecule(mol, randomSeed=0) for mol in mols]
         calculator = spectrophore.SpectrophoreCalculator(normalization='none')
-        desc = [calculator.calculate(mol) for mol in tqdm(mols)]
-        return pd.DataFrame(desc)
+        names_new = None
+        try:
+            print('Running Normal Spectrophore Calc')
+            desc = [calculator.calculate(mol) for mol in tqdm(mols)]
+            return pd.DataFrame(desc), names_new
+        except:
+            print('Normal Spectrophore Broke - Running with Compromised Data Set!!!')
+            desc = []
+            names_new = []
+            # input = [(x, y) for x, y in zip(mols, names)]
+            # def worker(input):
+            #     mol, name = input[0], input[1]
+            #     try:
+            #         desc.append(calculator.calculate(mol))
+            #         names_new.append(name)
+            #     except:
+            #         print('nope')
+            # _ = Parallel(n_jobs=os.cpu_count())(delayed(worker)(i) for i in tqdm(input, ncols=80))
+        # return pd.DataFrame(desc), names_new
+            for idx, mol in tqdm(enumerate(mols)):
+                try:
+                    desc.append(calculator.calculate(mol))
+                    names_new.append(names[idx])
+                except:
+                    print('nope')
+            return pd.DataFrame(desc), names_new
+
+
 
     def get_raw_descriptors(self, smiles, names):
         if args.input == 'rdkit_descriptor':
@@ -87,7 +115,7 @@ class RepresentationGenerator:
         elif args.input == 'maccs':
             desc_df = self.maccs_from_smiles(smiles)
         elif args.input == 'spectrophore':
-            desc_df = self.spectrophore_from_smiles(smiles)
+            desc_df, names = self.spectrophore_from_smiles(smiles, names)
         else:
             AttributeError('Input type argument not implemented ')
         desc_df.index = names
