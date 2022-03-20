@@ -41,7 +41,7 @@ class RepresentationGenerator:
         mols_updated = [mol for mol in mols if isinstance(mol, Chem.Mol)]
         return pd.DataFrame(calc.pandas(mols_updated, nproc=os.cpu_count()))
 
-    def rdkit_descriptors_from_smiles(self, smile_list, names):
+    def rdkit_descriptors_from_smiles(self, smile_list):
         get_desc = RDKitDescriptors()
         desc = get_desc.featurize(smile_list)
         return pd.DataFrame(desc)
@@ -72,7 +72,7 @@ class RepresentationGenerator:
         mols = [Chem.AddHs(mol) for mol in tqdm(mols)]
         [AllChem.EmbedMolecule(mol, randomSeed=0) for mol in mols]
         calculator = spectrophore.SpectrophoreCalculator(normalization='none')
-        names_new = None
+        names_new = names
         try:
             print('Running Normal Spectrophore Calc')
             desc = [calculator.calculate(mol) for mol in tqdm(mols)]
