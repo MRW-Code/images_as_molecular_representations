@@ -83,7 +83,7 @@ def kfold_fastai(n_splits=10):
         labels = unique_raw['label']
 
         # start kfold
-        kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+        kfold = StratifiedKFold(n_splits=n_splits, shuffle=True)
         best_metrics = []
         count = 0
         for train_index, val_index in tqdm(kfold.split(paths, labels)):
@@ -140,7 +140,7 @@ def kfold_fastai(n_splits=10):
         labels = raw_df['label']
 
         # Kfold split
-        kfold = KFold(n_splits=n_splits, shuffle=True, random_state=42)
+        kfold = KFold(n_splits=n_splits, shuffle=True)
         best_metrics = []
         count = 0
         for train_index, val_index in tqdm(kfold.split(paths)):

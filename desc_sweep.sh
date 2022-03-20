@@ -28,6 +28,8 @@
 #python3 main.py -d solubility -i ecfp
 
 python3 main.py -d solubility -i pubchem_fp
+python3 main.py -d solubility -i pubchem_fp
+python3 main.py -d solubility -i pubchem_fp
 
 #python3 main.py -d solubility -i maccs
 #python3 main.py -d solubility -i maccs

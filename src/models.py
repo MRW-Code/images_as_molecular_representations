@@ -57,7 +57,7 @@ def random_forest_classifier(features, labels, do_kfold=True):
     if do_kfold:
         splits = 10
         count = 0
-        kfold = StratifiedKFold(n_splits=splits, shuffle=True, random_state=42)
+        kfold = StratifiedKFold(n_splits=splits, shuffle=True)
 
         # Placeholders for metrics
         acc = np.empty(splits)
@@ -90,7 +90,7 @@ def random_forest_regressor(features, labels, do_kfold=True):
     if do_kfold:
         splits = 10
         count = 0
-        kfold = KFold(n_splits=splits, shuffle=True, random_state=42)
+        kfold = KFold(n_splits=splits, shuffle=True)
 
         # Placeholders for metrics
         r2 = np.empty(splits)
