@@ -19,9 +19,9 @@ class RepresentationGenerator:
         print(f'GENERATING DESCRIPTORS FROM {args.input}')
         self.dataset = dataset
         if self.dataset == 'solubility':
-            # self.raw_df = pd.read_csv('./data/solubility/raw_water_sol_set.csv').iloc[0:20, :]
-            # self.smiles = self.raw_df.SMILES[0:20]
-            # self.id = self.raw_df.CompoundID[0:20]
+            # self.raw_df = pd.read_csv('./data/solubility/raw_water_sol_set.csv').iloc[0:100, :]
+            # self.smiles = self.raw_df.SMILES[0:100]
+            # self.id = self.raw_df.CompoundID[0:100]
             self.raw_df = pd.read_csv('./data/solubility/raw_water_sol_set.csv')
             self.smiles = self.raw_df.SMILES
             self.id = self.raw_df.CompoundID
@@ -41,7 +41,7 @@ class RepresentationGenerator:
         mols_updated = [mol for mol in mols if isinstance(mol, Chem.Mol)]
         return pd.DataFrame(calc.pandas(mols_updated, nproc=os.cpu_count()))
 
-    def rdkit_descriptors_from_smiles(self, smile_list):
+    def rdkit_descriptors_from_smiles(self, smile_list, names):
         get_desc = RDKitDescriptors()
         desc = get_desc.featurize(smile_list)
         return pd.DataFrame(desc)
@@ -59,7 +59,7 @@ class RepresentationGenerator:
     def pubchem_fp_from_smiles(self, smile_list):
         get_desc = PubChemFingerprint()
         desc = get_desc.featurize(smile_list)
-        return pd.DataFrame(desc)
+        return pd.DataFrame([desc[x] for x in range(len(desc))])
 
     def maccs_from_smiles(self, smile_list):
         get_desc = MACCSKeysFingerprint()
@@ -81,16 +81,6 @@ class RepresentationGenerator:
             print('Normal Spectrophore Broke - Running with Compromised Data Set!!!')
             desc = []
             names_new = []
-            # input = [(x, y) for x, y in zip(mols, names)]
-            # def worker(input):
-            #     mol, name = input[0], input[1]
-            #     try:
-            #         desc.append(calculator.calculate(mol))
-            #         names_new.append(name)
-            #     except:
-            #         print('nope')
-            # _ = Parallel(n_jobs=os.cpu_count())(delayed(worker)(i) for i in tqdm(input, ncols=80))
-        # return pd.DataFrame(desc), names_new
             for idx, mol in tqdm(enumerate(mols)):
                 try:
                     desc.append(calculator.calculate(mol))
@@ -99,19 +89,20 @@ class RepresentationGenerator:
                     print('nope')
             return pd.DataFrame(desc), names_new
 
-
-
     def get_raw_descriptors(self, smiles, names):
-        if args.input == 'rdkit_descriptor':
-            desc_df = self.rdkit_descriptors_from_smiles(smiles)
-        elif args.input == 'mordred_descriptor':
+        if args.input == 'mordred_descriptor':
             desc_df = self.mordred_descriptors_from_smiles(smiles)
+        elif args.input == 'rdkit_descriptor':
+            desc_df = self.rdkit_descriptors_from_smiles(smiles)
         elif args.input == 'mol2vec':
             desc_df = self.mol2vec_from_smiles(smiles)
         elif args.input == 'ecfp':
             desc_df = self.ecfp_from_smiles(smiles)
         elif args.input == 'pubchem_fp':
             desc_df = self.pubchem_fp_from_smiles(smiles)
+            desc_df.index = names
+            desc_df = desc_df.dropna(axis=0)
+            return desc_df
         elif args.input == 'maccs':
             desc_df = self.maccs_from_smiles(smiles)
         elif args.input == 'spectrophore':
