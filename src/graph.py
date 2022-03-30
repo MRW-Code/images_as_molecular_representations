@@ -26,7 +26,7 @@ class GraphGenerator():
 
     def weave_graph_from_smiles(self, smile_list):
         maker = WeaveFeaturizer()
-        graphs = [maker.featurize(smile) for smile in smile_list]
+        graphs = [maker.featurize(smile)[0] for smile in smile_list]
         return graphs
 
     def get_graph(self, smiles, names):
