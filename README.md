@@ -26,21 +26,16 @@ Code can be run with the following command and flags.
 
 ```bash
 python3 main.py [options]
-# OR
-python3 sota.py [options]
 ```
 ```bash
 python3 main.py 
 
 optional arguments:
-  -h, --help            show this help message and exit
   -i  # Specify the input type i.e the molecular representation you want
   -d , --dataset  # Choose between solubility and cocrystal dataset
   --no_augs # Dont do image augmentation
   --gpu_idx # Use gpu with given index (only works 0-5)
   --cpu # train on cpu bu pretty sure this does nothing at present
   --no_kfold  # use test/train/val splits. Not all implemented as kfold was main method used. 
-  
-
 ```
 
