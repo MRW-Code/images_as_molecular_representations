@@ -28,8 +28,6 @@ Code can be run with the following command and flags.
 python3 main.py [options]
 ```
 ```bash
-python3 main.py 
-
 optional arguments:
   -i  # Specify the input type i.e the molecular representation you want
   -d , --dataset  # Choose between solubility and cocrystal dataset
