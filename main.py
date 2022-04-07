@@ -16,14 +16,9 @@ def empty_file(path):
 
 if __name__ == '__main__':
     if args.input == 'image':
-        # Generate the training images - uses all cpu cores
-        img_gen = ImageGenerator(args.dataset)
-
-        # Apply fastai model
-        ttv_fastai() if args.no_kfold else kfold_fastai()
-
-        # Storage cleaning!
-        empty_file(f'./data/{args.dataset}/aug_images')
+        img_gen = ImageGenerator(args.dataset)  # Generate the training images - uses all cpu cores
+        ttv_fastai() if args.no_kfold else kfold_fastai()   # Apply fastai model
+        empty_file(f'./data/{args.dataset}/aug_images')     # Storage cleaning!
 
     elif 'graph' in args.input:
         graph_gen = GraphGenerator(args.dataset)
