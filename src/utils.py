@@ -14,7 +14,6 @@ parser.add_argument('--no_augs', action='store_true', dest='no_augs', default=Fa
 parser.add_argument('--gpu_idx', action='store', dest='gpu_idx', default='0',
                   choices=['0', '1', '2', '3', '4', '5'])
 parser.add_argument('--cpu', action='store_true', dest='cpu', default=False)
-parser.add_argument('--no_kfold', action='store_true', dest='no_kfold', default=False)
 args = parser.parse_args()
 
 os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_idx

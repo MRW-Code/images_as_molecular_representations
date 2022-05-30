@@ -34,7 +34,6 @@ optional arguments:
   --no_augs # Dont do image augmentation
   --gpu_idx # Use gpu with given index (only works 0-5)
   --cpu # train on cpu bu pretty sure this does nothing at present
-  --no_kfold  # use test/train/val splits. Not all implemented as kfold was main method used. 
 ```
 
 # How to generate images for custom modelling
