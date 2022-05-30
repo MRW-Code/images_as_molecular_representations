@@ -3,7 +3,7 @@ This work will hopefully accompany the following publication (insert doi here).
 
 # Env Set Up
 Project was built using python 3.6 and a virtual environment. Previously RDKit needed conda but given this is no longer 
-the case, venv was used. 
+the case, venv was used. The requirements install was correct at the time of making, but please check your pytorch install versions especially if you plan to use a gpu! The install for the pip version of RDKit is shown on the final line of these instructions, this should install automatically from `requirements.txt` but is included for reference. 
 
 ```bash
 # Install venv and dependencies
