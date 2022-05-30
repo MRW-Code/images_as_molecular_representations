@@ -27,12 +27,14 @@ class ImageGenerator():
         draw = Draw.MolToFile(mol, (f'./data/{self.dataset}/images/{compound_id}.png'), size=[250, 250])
 
     def gen_all_solubility_images(self):
+        os.makedirs(f'./data/{self.dataset}/images', exist_ok=True)
         smiles = self.smiles
         id = self.id
         # [self.smile_to_image(s, i) for s, i in tqdm.tqdm(zip(smiles, id))]
         Parallel(n_jobs=os.cpu_count())(delayed(self.smile_to_image)(s, i) for s, i in tqdm.tqdm(zip(smiles, id), ncols=80))
 
     def gen_all_cc_images(self):
+        os.makedirs(f'./data/{self.dataset}/images', exist_ok=True)
         smiles = self.smilesA
         id = self.idA
         # [self.smile_to_image(s, i) for s,i in tqdm.tqdm(zip(smiles, id))]
