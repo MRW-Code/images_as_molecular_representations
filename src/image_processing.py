@@ -47,6 +47,7 @@ class ImageAugmentations:
     def do_image_augmentations(self, model_df):
         print('AUGMENTING IMAGES')
         save_path = f'./data/{self.dataset}/aug_images/'
+        os.makedirs(save_path, exist_ok=True)
         model_df = model_df[model_df['is_valid'] == 0]
         input = [(x, y) for x, y in zip(model_df['path'], model_df['label'])]
         def worker(input):
@@ -83,6 +84,7 @@ class ImageStacker:
         pathA = [read_path + x + '.png' for x in self.compA]
         pathB = [read_path + x + '.png' for x in self.compB]
         save_path = './data/cocrystal/concat_images/'
+        os.makedirs(save_path, exist_ok=True)
         counter = 0
         paths = []
         labels = []

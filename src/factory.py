@@ -24,52 +24,6 @@ def get_aug_df(dataset):
     model_df['is_valid'] = 0
     return model_df
 
-def ttv_fastai():
-    if args.dataset == 'cocrystal':
-        img_stacker = ImageStacker()
-        raw_df = img_stacker.fastai_data_table()
-        raw_df = split_cc_dataset(raw_df, 0.2)
-    elif args.dataset == 'solubility':
-        raw_df = get_split_sol_dataset(val_pct=0.2, test_pct=0.25)
-
-        # Apply Image Augmentations to the training sets only!
-        # Generate the dataframe for the model with new aug_paths and labels
-    if not args.no_augs:
-        augmentor = ImageAugmentations(args.dataset)
-        augmentor.do_image_augmentations(raw_df)
-        aug_df = get_aug_df(args.dataset)
-        val_df = raw_df[raw_df['is_valid'] == 1]
-        model_df = pd.concat([aug_df, val_df], axis=0)
-    else:
-        model_df = raw_df[raw_df['is_valid'] != 'test']
-
-    # Apply FastAI model
-    if args.dataset == 'cocrystal':
-        trainer = train_fastai_model_classification(model_df)
-    elif args.dataset == 'solubility':
-        trainer = train_fastai_model_regression(model_df)
-        ### test sets!!!!!
-    model = load_learner(f'./checkpoints/{args.dataset}/trained_model_{args.no_augs}.pkl', cpu=True)
-    # get best val acc
-    print(f'best_metrics = {model.final_record}')
-
-    #     true = []
-    #     preds = []
-    #     for idx, path in enumerate(test_df['fname']):
-    #         img = torch.tensor(cv2.imread(path)).cpu()
-    #         true.append(test_df.label.values[idx])
-    #         preds.append(model.predict(img)[0].lower())
-    #     acc = accuracy_score(true, preds)
-    #     final_acc.append(acc)
-    #     split_idx = split_idx + 1
-    #     torch.cuda.empty_cache()
-    # print(f'Val Acc Values: {val_acc}')
-    # print(f'Test Acc Values: {final_acc}')
-    # print(f'Mean Val Acc = {np.mean(val_acc)}')
-    # print(f'Mean Test Acc = {np.mean(final_acc)}')
-    return None
-
-
 def kfold_fastai(n_splits=10):
     if args.dataset == 'cocrystal':
         # get stacked images

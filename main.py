@@ -3,7 +3,7 @@ from src.models import *
 from src.image_generator import ImageGenerator
 from src.descriptors import RepresentationGenerator
 from src.graph import GraphGenerator
-from src.factory import ttv_fastai, kfold_fastai
+from src.factory import kfold_fastai
 import os
 import glob
 import pandas as pd
@@ -17,7 +17,7 @@ def empty_file(path):
 if __name__ == '__main__':
     if args.input == 'image':
         img_gen = ImageGenerator(args.dataset)  # Generate the training images - uses all cpu cores
-        ttv_fastai() if args.no_kfold else kfold_fastai()   # Apply fastai model
+        kfold_fastai()   # Apply fastai model
         empty_file(f'./data/{args.dataset}/aug_images')     # Storage cleaning!
 
     elif 'graph' in args.input:
