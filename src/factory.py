@@ -130,5 +130,4 @@ def kfold_fastai(n_splits=10):
         print(f'mean rmse = {np.mean([best_metrics[x][3] for x in range(n_splits)])}')
         print(f'mean mae = {np.mean([best_metrics[x][4] for x in range(n_splits)])}')
 
-
     return None

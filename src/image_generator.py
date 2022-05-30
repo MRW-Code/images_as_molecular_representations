@@ -37,10 +37,16 @@ class ImageGenerator():
         os.makedirs(f'./data/{self.dataset}/images', exist_ok=True)
         smiles = self.smilesA
         id = self.idA
+        ## For one core
         # [self.smile_to_image(s, i) for s,i in tqdm.tqdm(zip(smiles, id))]
+
+        # For multicore
         Parallel(n_jobs=os.cpu_count())(delayed(self.smile_to_image)(s, i) for s, i in tqdm.tqdm(zip(smiles, id), ncols=80))
 
         smiles = self.smilesB
         id = self.idB
+        ## For one core
         # [self.smile_to_image(s, i) for s, i in tqdm.tqdm(zip(smiles, id))]
+
+        # For multicore
         Parallel(n_jobs=os.cpu_count())(delayed(self.smile_to_image)(s, i) for s, i in tqdm.tqdm(zip(smiles, id), ncols=80))
