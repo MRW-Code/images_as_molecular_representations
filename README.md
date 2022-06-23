@@ -37,7 +37,7 @@ optional arguments:
 ```
 
 # How to generate images for custom modelling
-If you are reading this so that you can use images of molecules for your own work, then hopefully the following code snippet will be of use to you. These are the functions and imports needed to generate your own images of chemical structures from smiles codes. I believe RDKit has functionality to generate mols from a variety of unique identifiers so smiles could be swapped out for any one of these e.g InChI - see RDKit docs for their "MolFrom" functions. 
+If you are reading this so that you can use images of molecules for your own work, then hopefully the following pseudo code will be of use to you. These are the functions and imports needed to generate your own images of chemical structures from smiles codes. I believe RDKit has functionality to generate mols from a variety of unique identifiers so smiles could be swapped out for any one of these e.g InChI - see RDKit docs for their "MolFrom" functions. 
 ```
 from rdkit import Chem
 from rdkit.Chem import Draw
@@ -46,6 +46,7 @@ from joblib import Parallel, delayed
 
 # Compound ID is intended for use in f-strings to name the images something meaningful.
 def smile_to_image(smile, compound_id):
+    save_path = f'./your_save_path_here/{compound_id}'
     mol = Chem.MolFromSmiles(smile)
     draw = Draw.MolToFile(mol, save_path, size=[250, 250])
 
