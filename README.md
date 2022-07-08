@@ -1,5 +1,5 @@
 # images_as_molecular_representations
-This work will hopefully accompany the following publication (insert doi here). All work was carried out on a Linux (Ubuntu) machine, as such I cannot be sure that the instructions will translate directly to other operating systems. Please note this code is not actively maintained however if I am made aware of any issues I will endevour to fix them. If this work has proved useful, then I ask that you consider citing the orgininal paper. Truely I hope this project aids in the adoption of AI for chemical applications. 
+This repo accompanies the following publication "Images of chemical structures as molecular representations for deep learning ([https://doi.org/10.1557/s43578-022-00628-9]). All work was carried out on a Linux (Ubuntu) machine, as such I cannot be sure that the instructions will translate directly to other operating systems. Please note this code is not actively maintained however if I am made aware of any issues I will endevour to fix them. If this work has proved useful, then I ask that you consider citing the orgininal paper. Truely I hope this project aids in the adoption of AI for chemical applications. 
 
 # Env Set Up
 Project was built using python 3.6 and a virtual environment. Previously RDKit needed conda but given this is no longer 
